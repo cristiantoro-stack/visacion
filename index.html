@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12181f">
+<meta name="robots" content="noindex">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Visación · Telconsulting</title>
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<!-- iPhone: ícono de la pantalla de inicio. A propósito NO hay "apple-mobile-web-app-capable" ni manifiesto en el iPhone:
+     abierta "como app web", iOS separa la sesión de Safari y Google no deja iniciar sesión ahí. -->
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Visación">
+<style>
+:root{--ink:#12181f;--panel:#1a222c;--line:#2c3846;--paper:#eef1f4;--muted:#8b98a8;--soft:#c7cdd6;--gold:#c99a3f;--gold-ink:#20180a;--warn:#f0a08a;}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--ink);color:var(--paper);font-family:"Segoe UI",-apple-system,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5}
+main{max-width:480px;margin:0 auto;padding:calc(28px + env(safe-area-inset-top,0px)) 20px calc(32px + env(safe-area-inset-bottom,0px));display:grid;gap:18px}
+.marca{display:flex;align-items:center;gap:14px}
+.marca img{width:64px;height:64px;border-radius:16px}
+.marca b{display:block;font-size:20px}
+.marca small{color:var(--muted);letter-spacing:.18em;font-size:11px;font-weight:700}
+.pan{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:12px}
+.lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700}
+ol{margin:0;padding-left:22px;display:grid;gap:10px}
+li b{color:var(--paper)}
+.ojo{border-color:rgba(240,160,138,.5);background:rgba(224,122,95,.1)}
+.ojo b{color:var(--warn)}
+.btn{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--paper);font:inherit;font-weight:700;text-decoration:none;cursor:pointer}
+.btn.pri{background:var(--gold);border-color:var(--gold);color:var(--gold-ink)}
+.p-x{color:var(--muted);font-size:13px}
+[hidden]{display:none!important}
+.sym{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:7px;background:#212b37;border:1px solid var(--line);font-size:12px;vertical-align:middle}
+</style>
+</head>
+<body>
+<main>
+  <div class="marca"><img src="icons/icon-192.png" alt=""><div><small>TELCONSULTING</small><b>Visación de facturas</b></div></div>
+
+  <section class="pan" id="abriendo" hidden><div class="lbl">Abriendo</div><div>Entrando a la app de visación…</div></section>
+
+  <!-- iPhone abierto como app web: la sesión de Google no funciona ahí -->
+  <section class="pan ojo" id="ios-web" hidden>
+    <div class="lbl">Hay que reinstalar el ícono</div>
+    <div>Este ícono se agregó como <b>app web</b> y así Google no deja iniciar sesión. Bórralo y agrégalo de nuevo con <b>“Abrir como app web” apagado</b>.</div>
+    <a class="btn pri" id="ios-safari" target="_blank" rel="noopener">Abrir en Safari</a>
+  </section>
+
+  <section class="pan" id="ios" hidden>
+    <div class="lbl">iPhone · Safari</div>
+    <ol>
+      <li>Toca <span class="sym">⋯</span> o <span class="sym">Compartir</span> abajo en Safari.</li>
+      <li>Elige <b>Agregar a pantalla de inicio</b>.</li>
+      <li><b>Apaga “Abrir como app web”</b>. Si queda encendido, Google no te dejará entrar.</li>
+      <li>Toca <b>Agregar</b>. El ícono “Visación” abre la app en Safari, con tu sesión de telconsulting.cl.</li>
+    </ol>
+    <div class="p-x">No recargues esta página antes de agregarla: la dirección ya quedó lista para el ícono.</div>
+  </section>
+  <section class="pan" id="ios-otro" hidden>
+    <div class="lbl">iPhone</div>
+    <div>Abre este enlace en <b>Safari</b> para instalar el ícono (en Chrome del iPhone no se puede apagar “Abrir como app web”).</div>
+  </section>
+
+  <section class="pan" id="android" hidden>
+    <div class="lbl">Android · Chrome</div>
+    <button type="button" class="btn pri" id="instalar" hidden>Instalar Visación</button>
+    <ol id="pasos-android">
+      <li>Toca <span class="sym">⋮</span> arriba a la derecha en Chrome.</li>
+      <li>Elige <b>Instalar app</b> (o <b>Agregar a la pantalla principal</b>).</li>
+      <li>Confirma. El ícono “Visación” abre la app con tu cuenta de telconsulting.cl de Chrome.</li>
+    </ol>
+  </section>
+
+  <a class="btn" id="entrar">Entrar sin instalar</a>
+  <div class="p-x">La app no guarda documentos en el teléfono: los ves en pantalla y al cerrar se borran. Entra solo quien está activo en Visadores, con su cuenta corporativa y su doble factor.</div>
+</main>
+<script>
+(function () {
+  'use strict';
+  // La app (Google Apps Script, solo cuentas de telconsulting.cl). /a/macros/telconsulting.cl/ elige la cuenta corporativa si hay varias.
+  var APP = 'https://script.google.com/a/macros/telconsulting.cl/s/AKfycby5wNXEPVDh8iLf_1wg1c-uoic1k89m8JlX6gf5Bmpz8ZtvUkbVVos9bwnIN5CFSh44Aw/exec';
+  var ua = navigator.userAgent, q = new URLSearchParams(location.search);
+  var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var safari = ios && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|GSA\//.test(ua);
+  var appWeb = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  var destino = APP + (q.get('doc') ? '?doc=' + encodeURIComponent(q.get('doc')) : '');
+  var ver = function (id) { document.getElementById(id).hidden = false; };
+  document.getElementById('entrar').href = destino;
+  document.getElementById('ios-safari').href = destino;
+
+  if (ios && appWeb) { ver('ios-web'); return; }                     // iPhone "como app web": avisar en vez de entrar a un inicio de sesión bloqueado
+  if (q.get('app') === '1') { ver('abriendo'); location.replace(destino); return; }   // desde el ícono: directo a la app
+
+  if (ios) {
+    if (!safari) { ver('ios-otro'); return; }
+    // lo que guarda "Agregar a pantalla de inicio" es la dirección que se ve: se deja lista para abrir la app directo
+    try { history.replaceState(null, '', location.pathname + '?app=1'); } catch (e) { /* nada */ }
+    ver('ios');
+    return;
+  }
+  // Android: manifiesto y service worker (sin caché) para "Instalar app"; el ícono abre a pantalla completa y entra con la sesión de Chrome
+  var m = document.createElement('link'); m.rel = 'manifest'; m.href = 'manifest.webmanifest'; document.head.appendChild(m);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () { /* el atajo sigue funcionando */ });
+  ver('android');
+  var aviso = null, b = document.getElementById('instalar');
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); aviso = e; b.hidden = false; });
+  b.addEventListener('click', function () { if (!aviso) return; aviso.prompt(); aviso.userChoice.then(function () { aviso = null; b.hidden = true; }); });
+  window.addEventListener('appinstalled', function () { b.hidden = true; document.getElementById('pasos-android').innerHTML = '<li>Listo: abre <b>Visación</b> desde la pantalla principal.</li>'; });
+})();
+</script>
+</body>
+</html>
